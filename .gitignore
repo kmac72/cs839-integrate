@@ -1,3 +1,8 @@
 *.sqlite
 .DS_Store
 __pycache__
+**/arduino_secrets.h
+**/debug.cfg
+**/*.svd
+
+**/*.json
