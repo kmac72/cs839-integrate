@@ -21,6 +21,8 @@ After cloning, open `cadence_bpm_system.ino` in the Arduino IDE.
 
 
 ## Troubleshooting
-
-If you're on MacOS getting weird Serial output, make sure your Serial is rendering at 115200 baud. 
-If you're having trouble uploading the project to an ESP32, change your memory partition via Tools -> Partition Scheme -> Huge APP
+<ul>
+ <li> If you're on MacOS getting weird Serial output, make sure your Serial is rendering at 115200 baud. </li>
+ <li> If you're having trouble uploading the project to an ESP32, change your memory partition via Tools -> Partition Scheme -> Huge APP </li>
+</ul>
+ 
