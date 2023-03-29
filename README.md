@@ -12,14 +12,11 @@ After cloning, open `cadence_bpm_system.ino` in the Arduino IDE.
 
 | Task                  | Status     |
 | --------------------- | ---------- |
-| :bug: <Template> Example Bug  | In progress|
-  | :bug: Fix issue #123  | In progress|
-| :rocket: Add feature X| Not started|
-| :memo: Update docs    | Done       |
-  
-| 🚀: <Template> Add feature X | ❎: Not started|
-| 🚀: Connect ESP to Moofit Sensor | ✔️: Done       |
-| 🚀: Search Spotify for songs by BPM | :candle: In progress      |
+| :bug: <Template> Example Bug  | In progress |
+| :rocket: <Template> Add feature X| Not started |
+| 🚀 <Template> Add feature X | ❎ Not started|
+| 🚀 Connect ESP to Moofit Sensor | ✔️ Done       |
+| 🚀 Search Spotify for songs by BPM | :candle: In progress      |
 
 
 ## Troubleshooting
