@@ -12,6 +12,7 @@ After cloning, open `cadence_bpm_system.ino` in the Arduino IDE.
 
 | Task                  | Status     |
 | --------------------- | ---------- |
+| Task 1| Status 1 |
 
 
 ## Troubleshooting
