@@ -14,8 +14,12 @@ After cloning, open `cadence_bpm_system.ino` in the Arduino IDE.
 | --------------------- | ---------- |
 | :bug: Template Example Bug | In progress |
 | :rocket: Add feature X | Not started|
+| :biking_man: Potential Feature | If we have time|
 | 🚀 Connect ESP to Moofit Sensor | ✔️ Done|
 | 🚀 Search Spotify for songs by BPM | :candle: In progress|
+| :biking_man: Stop playback if effort wanes to encourage effort | Potential |
+| 🚀 Calculate cadence moving average | Not Started |
+
  
 
 
