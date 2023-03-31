@@ -4,5 +4,5 @@ __pycache__
 **/arduino_secrets.h
 **/debug.cfg
 **/*.svd
-
 **/*.json
+.vscode
