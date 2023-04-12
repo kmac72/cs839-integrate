@@ -22,7 +22,7 @@ After cloning, open `cadence_bpm_system.ino` in the Arduino IDE.
 | 🚀 Spin up EC2 Instance | :candle: In progress |
 | 🚀 Serial out cadence data | :candle: In progress |
 | :biking_man: Stop playback if effort wanes to encourage effort | Potential |
-| 🚀 Calculate cadence moving average | Not Started |
+| 🚀 Calculate cadence moving average | In progress |
 | 🚀 Feed cadence avg to Spotify functionality (put everything together!) | Not started |
 
 
