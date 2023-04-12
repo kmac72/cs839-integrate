@@ -32,6 +32,11 @@ static int prevCrankStaleness = 0;
 static int stalenessLimit = 4;
 static int scanCount = 0;
 
+static int cadenceAverageNumerator = 0;
+static int cadenceAverageDenominator = 0;
+static int curCadenceTimeValue = 0;
+static int curCadenceAverage = 0;
+
 #define debug 0
 #define maxCadence 120
 
@@ -144,7 +149,11 @@ static void notifyCallback(BLERemoteCharacteristic* pBLERemoteCharacteristic, ui
   cadence = (int)rpm;
   //Test
   //cadence = cadence + 2;
-  
+
+  curCadenceTimeValue = cadence * timeDelta;
+  cadenceAverageNumerator = cadenceAverageNumerator + curCadenceTimeValue;
+  cadenceAverageDenominator = cadenceAverageDenominator + timeDelta;
+  curCadenceAverage = cadenceAverageNumerator / cadenceAverageDenominator;
   
   if(debug) {
     Serial.print("CALLBACK(");
