@@ -1,18 +1,23 @@
 
 #include <WiFi.h>
+#include <WiFiClientSecure.h>
 #include <time.h>
 #include "BLEDevice.h"
 #include "BluetoothSerial.h"
 #include <HTTPClient.h>
 #include "arduino_secrets.h"
 #include "device.h"
-
+#include <SpotifyArduino.h>
+#include <SpotifyArduinoCert.h>
+#include <ArduinoJson.h>
 
 
 // 839 Integrate
-
 const char* ssid = SECRET_SSID;
 const char* password = SECRET_PASSWORD;
+
+char clientId[] = CLIENT_ID;
+char clientSecret[] = CLIENT_SECRET;
 
 static boolean cadence_connected = false;
 
@@ -34,10 +39,22 @@ static int stalenessLimit = 4;
 static int scanCount = 0;
 
 #define debug 1
+
+static int cadenceAverageNumerator = 0;
+static int cadenceAverageDenominator = 0;
+static int curCadenceTimeValue = 0;
+static int curCadenceAverage = 0;
+
+#define debug 0
 #define maxCadence 120
 
 
-WiFiClient wifi_client;
+// Country code, including this is advisable
+#define SPOTIFY_MARKET "US"
+
+// Spotify
+WiFiClientSecure wifi_client;
+SpotifyArduino spotify(wifi_client, clientId, clientSecret, SPOTIFY_REFRESH_TOKEN);
 
 unsigned long prev_timestamp;
 unsigned int loop_delay = 10000;  // 10 secs
@@ -145,7 +162,11 @@ static void notifyCallback(BLERemoteCharacteristic* pBLERemoteCharacteristic, ui
   cadence = (int)rpm;
   //Test
   //cadence = cadence + 2;
-  
+
+  curCadenceTimeValue = cadence * timeDelta;
+  cadenceAverageNumerator = cadenceAverageNumerator + curCadenceTimeValue;
+  cadenceAverageDenominator = cadenceAverageDenominator + timeDelta;
+  curCadenceAverage = cadenceAverageNumerator / cadenceAverageDenominator;
   
   // if(debug) {
   //   Serial.print("CALLBACK(");
@@ -232,6 +253,22 @@ bool connectToServer() {
   return true;
 }
 
+string fetchSongByBPM(int bpm) {
+    return "";
+}
+
+void playSong(str trackuri) {
+    Serial.print("Free Heap: ");
+    Serial.println(ESP.getFreeHeap());
+
+    char body[100];
+    sprintf(body, "{\"uris\" : [\"%s\"]}", results[i].trackUri);
+    if (spotify.playAdvanced(body))
+    {
+        Serial.println("sent!");
+    }
+}
+
 void setup() {
   Serial.begin(115200);
   // Connect to Wi-Fi
@@ -250,6 +287,17 @@ void setup() {
   scanner->setInterval(1349);
   scanner->setWindow(449);
   scanner->setActiveScan(true);
+
+
+
+  // Spotify stuff
+  client.setCACert(spotify_server_cert);
+
+  Serial.println("Refreshing Access Tokens");
+  if (!spotify.refreshAccessToken())
+  {
+    Serial.println("Failed to get access tokens");
+  }
 }
 
 void loop() {
@@ -276,13 +324,14 @@ void loop() {
     }
   }
 
-  // Serial.print(device.read());
+  // If we get here it's connected
   unsigned long curr_timestamp = millis();
-  if(curr_timestamp - prev_timestamp > loop_delay) {
+    if(curr_timestamp - prev_timestamp > loop_delay) {
 
+      int bpm = cadence * 2
+      string trackUri = fetchSongByBPM(bpm);
+      playSong(trackUri);
 
-
-
-    prev_timestamp = millis();
-  }
+      prev_timestamp = millis();
+    }
 }
