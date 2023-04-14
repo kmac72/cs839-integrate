@@ -20,7 +20,7 @@ After cloning, open `cadence_bpm_system.ino` in the Arduino IDE.
 | 🚀 Search Spotify for songs by BPM | ✔️ Done |
 | 🚀 Play a given Spotify song | ✔️ Done|
 | 🚀 Spin up EC2 Instance | ✔️ Done |
-| 🚀 Serial out cadence data | :candle: In progress |
+| 🚀 Serial out cadence data | ✔️ Done |
 | :biking_man: Stop playback if effort wanes to encourage effort | Potential |
 | 🚀 Calculate cadence moving average | In progress |
 | 🚀 Feed cadence avg to Spotify functionality (put everything together!) | Not started |
