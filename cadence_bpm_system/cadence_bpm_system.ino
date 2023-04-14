@@ -2,6 +2,7 @@
 #include <WiFi.h>
 #include <time.h>
 #include "BLEDevice.h"
+#include "BluetoothSerial.h"
 #include <HTTPClient.h>
 #include "arduino_secrets.h"
 #include "device.h"
@@ -32,7 +33,7 @@ static int prevCrankStaleness = 0;
 static int stalenessLimit = 4;
 static int scanCount = 0;
 
-#define debug 0
+#define debug 1
 #define maxCadence 120
 
 
@@ -64,14 +65,14 @@ static void notifyCallback(BLERemoteCharacteristic* pBLERemoteCharacteristic, ui
   int cumulativeCrankRev = int((data[crankRevIndex + 1] << 8) + data[crankRevIndex]);
   int lastCrankTime = int((data[crankTimeIndex + 1] << 8) + data[crankTimeIndex]);
 
-  if(debug)    
-  {
-    Serial.println("Notify callback for characteristic");
-    Serial.print("cumulativeCrankRev: ");
-    Serial.println(cumulativeCrankRev);
-    Serial.print("lastCrankTime: ");
-    Serial.println(lastCrankTime);
-  }
+  // if(debug)    
+  // {
+  //   Serial.println("Notify callback for characteristic");
+  //   Serial.print("cumulativeCrankRev: ");
+  //   Serial.println(cumulativeCrankRev);
+  //   Serial.print("lastCrankTime: ");
+  //   Serial.println(lastCrankTime);
+  // }
     
   int deltaRotations = cumulativeCrankRev - prevCumulativeCrankRev;
   if (deltaRotations < 0) 
@@ -85,13 +86,13 @@ static void notifyCallback(BLERemoteCharacteristic* pBLERemoteCharacteristic, ui
     timeDelta += 65535; 
   }
 
-  if(debug)    
-  {
-    Serial.print("deltaRotations: ");
-    Serial.println(deltaRotations);
-    Serial.print("timeDelta: ");
-    Serial.println(timeDelta);
-  }
+  // if(debug)    
+  // {
+  //   Serial.print("deltaRotations: ");
+  //   Serial.println(deltaRotations);
+  //   Serial.print("timeDelta: ");
+  //   Serial.println(timeDelta);
+  // }
   
   // In Case Cad Drops, we use PrevRPM 
   // to substitute (up to 4 seconds before reporting 0)
@@ -104,9 +105,9 @@ static void notifyCallback(BLERemoteCharacteristic* pBLERemoteCharacteristic, ui
       
     if(debug)    
     {
-      Serial.print("timeMins: ");
-      Serial.println(timeMins);
-      Serial.print("timeDelta != 0: rpm - ");
+      // Serial.print("timeMins: ");
+      // Serial.println(timeMins);
+      // Serial.print("timeDelta != 0: rpm - ");
       Serial.println(rpm);
     }
   }
@@ -146,20 +147,20 @@ static void notifyCallback(BLERemoteCharacteristic* pBLERemoteCharacteristic, ui
   //cadence = cadence + 2;
   
   
-  if(debug) {
-    Serial.print("CALLBACK(");
-    Serial.print(pBLERemoteCharacteristic->getUUID().toString().c_str());
-    Serial.print(":");
-    Serial.print(length);
-    Serial.print("):");
-    for(int x = 0; x < length; x++) {
-      if(data[x] < 16) {
-        Serial.print("0");
-      }
-      Serial.print(data[x], HEX);
-    }
-    Serial.println();
-  }
+  // if(debug) {
+  //   Serial.print("CALLBACK(");
+  //   Serial.print(pBLERemoteCharacteristic->getUUID().toString().c_str());
+  //   Serial.print(":");
+  //   Serial.print(length);
+  //   Serial.print("):");
+  //   for(int x = 0; x < length; x++) {
+  //     if(data[x] < 16) {
+  //       Serial.print("0");
+  //     }
+  //     Serial.print(data[x], HEX);
+  //   }
+  //   Serial.println();
+  // }
 
   
 }
@@ -275,7 +276,7 @@ void loop() {
     }
   }
 
-
+  // Serial.print(device.read());
   unsigned long curr_timestamp = millis();
   if(curr_timestamp - prev_timestamp > loop_delay) {
 

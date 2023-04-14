@@ -22,10 +22,8 @@ void addDevice(BLEAdvertisedDevice * device) {
   if(!device->haveServiceUUID() || !device->isAdvertisingService(serviceUUID)) {
     return;
   }
-  if (strcmp(device->getName().c_str(),"CS8L-C 06217")==0){
-    devices[device_count] = device;
-    device_count++;
-  }
+  devices[device_count] = device;
+  device_count++;
 }
 
 // Select a device and return it
