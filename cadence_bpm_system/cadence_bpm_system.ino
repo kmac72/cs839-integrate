@@ -254,26 +254,24 @@ bool connectToServer() {
   return true;
 }
 
-char *fetchSongByBPM(int bpm) {
+String fetchSongByBPM(int bpm) {
 
   char url[100];
   sprintf(url, "http://18.119.17.68:3000/songs?tempo_gte=%d&tempo_lte=%d&danceability_gte=.8", bpm - 2, bpm + 2);
   Serial.println(url);
   
-  http_client.useHTTP10(true);
   http_client.begin(wifi_client, url);
   int response = http_client.GET();
-  // String payload = http_client.getString();
+  String payload = http_client.getString();
 
   DynamicJsonDocument doc(1024);
-  deserializeJson(doc, http_client.getStream());
+  deserializeJson(doc, payload);
+  JsonObject obj = doc.as<JsonObject>();
   http_client.end();
-  // JsonObject parsed = JSONBuffer.parseObject(payload.c_str());
-  // return doc[""];
-  return "7ixxyJJJKZdo8bsdWwkaB6";
+  return obj["track_id"];
 }
 
-void playSong(char * trackUri) {
+void playSong(String trackUri) {
     char body[100];
     sprintf(body, "{\"uris\" : [\"%s\"]}", trackUri);
     if (spotify.playAdvanced(body))
@@ -342,7 +340,7 @@ void loop() {
     if(curr_timestamp - prev_timestamp > loop_delay) {
 
       int bpm = cadence * 2;
-      char *trackUri = fetchSongByBPM(bpm);
+      String trackUri = fetchSongByBPM(bpm);
       playSong(trackUri);
 
       prev_timestamp = millis();
