@@ -6,6 +6,13 @@ Our Integrate project is a wearable device that tracks cycling cadence and dynam
 
 After cloning, open `cadence_bpm_system.ino` in the Arduino IDE. 
 
+To get the Spotify part working, need to install some libraries.
+1. Download https://github.com/witnessmenow/spotify-api-arduino as zip
+2. In Arduino IDE, go to Sketch -> Include library -> Add ZIP library
+3. Also, go to Manage Libraries and install ArduinoJson. 
+
+You'll need a file called 'arduinosecrets.h' with your WiFi information and Spotify information.
+
 ## Usage
 
 ## Current tasks
