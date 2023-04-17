@@ -253,16 +253,13 @@ bool connectToServer() {
   return true;
 }
 
-string fetchSongByBPM(int bpm) {
-    return "";
+char *fetchSongByBPM(int bpm) {
+    return "7ixxyJJJKZdo8bsdWwkaB6";
 }
 
-void playSong(str trackuri) {
-    Serial.print("Free Heap: ");
-    Serial.println(ESP.getFreeHeap());
-
+void playSong(char * trackUri) {
     char body[100];
-    sprintf(body, "{\"uris\" : [\"%s\"]}", results[i].trackUri);
+    sprintf(body, "{\"uris\" : [\"%s\"]}", trackUri);
     if (spotify.playAdvanced(body))
     {
         Serial.println("sent!");
@@ -291,7 +288,7 @@ void setup() {
 
 
   // Spotify stuff
-  client.setCACert(spotify_server_cert);
+  wifi_client.setCACert(spotify_server_cert);
 
   Serial.println("Refreshing Access Tokens");
   if (!spotify.refreshAccessToken())
@@ -328,8 +325,8 @@ void loop() {
   unsigned long curr_timestamp = millis();
     if(curr_timestamp - prev_timestamp > loop_delay) {
 
-      int bpm = cadence * 2
-      string trackUri = fetchSongByBPM(bpm);
+      int bpm = cadence * 2;
+      char *trackUri = fetchSongByBPM(bpm);
       playSong(trackUri);
 
       prev_timestamp = millis();
