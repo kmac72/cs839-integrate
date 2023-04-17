@@ -258,16 +258,19 @@ String fetchSongByBPM(int bpm) {
 
   char url[100];
   sprintf(url, "http://18.119.17.68:3000/songs?tempo_gte=%d&tempo_lte=%d&danceability_gte=.8", bpm - 2, bpm + 2);
+  Serial.print("Request: ");
   Serial.println(url);
   
   http_client.begin(wifi_client, url);
   int response = http_client.GET();
   String payload = http_client.getString();
+  http_client.end();
 
   DynamicJsonDocument doc(1024);
   deserializeJson(doc, payload);
   JsonObject obj = doc.as<JsonObject>();
-  http_client.end();
+
+  Serial.printf("Track id: %s\n", obj["track_id"]);
   return obj["track_id"];
 }
 
