@@ -54,6 +54,7 @@ static int curCadenceAverage = 0;
 
 // Spotify
 WiFiClientSecure wifi_client;
+HTTPClient http_client;
 SpotifyArduino spotify(wifi_client, clientId, clientSecret, SPOTIFY_REFRESH_TOKEN);
 
 unsigned long prev_timestamp;
@@ -254,7 +255,22 @@ bool connectToServer() {
 }
 
 char *fetchSongByBPM(int bpm) {
-    return "7ixxyJJJKZdo8bsdWwkaB6";
+
+  char url[100];
+  sprintf(url, "http://18.119.17.68:3000/songs?tempo_gte=%d&tempo_lte=%d&danceability_gte=.8", bpm - 2, bpm + 2);
+  Serial.println(url);
+  
+  http_client.useHTTP10(true);
+  http_client.begin(wifi_client, url);
+  int response = http_client.GET();
+  // String payload = http_client.getString();
+
+  DynamicJsonDocument doc(1024);
+  deserializeJson(doc, http_client.getStream());
+  http_client.end();
+  // JsonObject parsed = JSONBuffer.parseObject(payload.c_str());
+  // return doc[""];
+  return "7ixxyJJJKZdo8bsdWwkaB6";
 }
 
 void playSong(char * trackUri) {
