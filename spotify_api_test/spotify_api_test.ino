@@ -102,41 +102,7 @@ void setup()
   }
 }
 
-bool playlistSearchCallback(PlaylistSearchResult result, int index, int numResults)
-{
-
-  Serial.println("--------- Playlist Details ---------");
-
-  Serial.print("Playlist Index: ");
-  Serial.println(index);
-
-  Serial.print("Playlist Uri: ");
-  Serial.println(result.playlistUri);
-
-  Serial.print("Playlist Name: ");
-  Serial.println(result.playlistName);
-
-  Serial.print("Playlist Id: ");
-  Serial.println(result.playlistId);
-
-  Serial.print("Number of tracks: ");
-  Serial.println(result.numTracks);
-
-  Serial.print("Track href: ");
-  Serial.println(result.tracksHref);
-
-  Serial.print("Playlist Images (url): ");
-  for (int i = 0; i < result.numImages; i++){
-    Serial.println(result.albumImages[i].url);
-  }
-
-  Serial.println("-------------------------------");
-
-  return true;
-}
-
-
-bool playlistItemsCallback(SearchResult result, int index, int numResults)
+bool getResultsCallback(SearchResult result, int index, int numResults)
 {
 
   Serial.println("--------- Song Details ---------");
@@ -177,42 +143,26 @@ void loop()
 
     Serial.println("Making Search Request:");
 
-    String query = "/?q=140%20BPM&type=playlist&market=US&offset=1";
+    String query = "/?q=artist:Toto&type=track&market=US&offset=1";
     
-    PlaylistSearchResult results[MAX_RESULTS];
-    int status = spotify.searchForPlaylist(query, MAX_RESULTS, playlistSearchCallback, results);
+    SearchResult results[MAX_RESULTS];
+    int status = spotify.searchForSong(query, MAX_RESULTS, getResultsCallback, results);
     //spotify.searchForSong(query, limit, callback, array);
     
     if (status == 200)
     {
       Serial.println("Successfully got results: printing information");
-      if (sizeof(results) > 0) 
+      for (int i = 0; i < MAX_RESULTS; i++)
       {
-        PlaylistSearchResult thePlaylist = results[0];
-
-        SearchResult trackList[MAX_RESULTS];
-        query = "";
-        int trackStatus = spotify.getPlaylistItems(query, thePlaylist.playlistId, MAX_RESULTS, playlistItemsCallback, trackList);
-        if (trackStatus == 200)
+        //Plays 30 seconds of each song from the search
+        char body[100];
+        sprintf(body, "{\"uris\" : [\"%s\"]}", results[i].trackUri);
+        if (spotify.playAdvanced(body))
         {
-          Serial.println("Successfully got tracks: printing information");
-
-          for (int i = 0; i < MAX_RESULTS; i++)
-          {
-            //Plays 30 seconds of each song from the search
-            char body[100];
-            sprintf(body, "{\"uris\" : [\"%s\"]}", trackList[i].trackUri);
-            if (spotify.playAdvanced(body))
-            {
-                Serial.println("sent!");
-            }
-            delay(30*1e3);
-          }
+            Serial.println("sent!");
         }
-
-        
+        delay(30*1e3);
       }
-
     }
 
     requestDueTime = millis() + delayBetweenRequests;
