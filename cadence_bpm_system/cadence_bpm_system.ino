@@ -45,6 +45,13 @@ static int cadenceAverageDenominator = 0;
 static int curCadenceTimeValue = 0;
 static int curCadenceAverage = 0;
 
+static int timestampPlayingSongDone = 0;
+static int timestampToFetchNextSong = 0;
+
+static String currentPlayingSongTrackId = "";
+static String nextSongToPlayTrackId = "";
+static int nextSongToPlayDuration_ms = 0;
+
 #define debug 0
 #define maxCadence 120
 
@@ -270,6 +277,8 @@ String fetchSongByBPM(int bpm) {
   deserializeJson(doc, payload);
   JsonObject obj = doc.as<JsonObject>();
 
+  nextSongToPlayDuration_ms = obj["duration_ms"];
+
   Serial.printf("Track id: %s\n", obj["track_id"]);
   return obj["track_id"];
 }
@@ -340,12 +349,26 @@ void loop() {
 
   // If we get here it's connected
   unsigned long curr_timestamp = millis();
-    if(curr_timestamp - prev_timestamp > loop_delay) {
 
-      int bpm = cadence * 2;
-      String trackUri = fetchSongByBPM(bpm);
-      playSong(trackUri);
+  if(curr_timestamp >= timestampToFetchNextSong) {
+    curAverageBpm = curCadenceAverage * 2;
+    nextSongToPlayTrackId = fetchSongByBPM(curAverageBpm);
+    cadenceAverageNumerator = 0;
+    cadenceAverageDenominator = 0;
+  }
 
-      prev_timestamp = millis();
-    }
+  if(curr_timestamp >= timestampPlayingSongDone) {
+    playSong(nextSongToPlayTrackId);
+    int halfLengthSongPlayed = nextSongToPlayDuration_ms * 0.5;
+    timestampToFetchNextSong = millis() + halfLengthSongPlayed;
+    timestampPlayingSongDone = millis() + nextSongToPlayDuration_ms;
+    currentPlayingSongTrackId = nextSongToPlayTrackId;
+  }
+
+  //if(curr_timestamp - prev_timestamp > loop_delay) {
+    //int bpm = cadence * 2;
+    //String trackUri = fetchSongByBPM(bpm);
+    //playSong(trackUri);
+    //prev_timestamp = millis();
+  //}
 }
