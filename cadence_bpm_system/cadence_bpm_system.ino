@@ -40,10 +40,10 @@ static int scanCount = 0;
 
 #define debug 0
 
-static int cadenceAverageNumerator = 75;
+static int cadenceAverageNumerator = 0;
 static int cadenceAverageDenominator = 1;
 static int curCadenceTimeValue = 0;
-static int curCadenceAverage = 0;
+static int curCadenceAverage = 85;
 
 static int timestampPlayingSongDone = 0;
 static int timestampToFetchNextSong = 0;
@@ -267,7 +267,7 @@ bool connectToServer() {
 
 String fetchSongByBPM(int bpm) {
 
-  bpm = 160;
+  //bpm = 160;
 
   char url[100];
   sprintf(url, "http://18.119.17.68:3000/songs?tempo_gte=%d&tempo_lte=%d&danceability_gte=.8", bpm - 1, bpm + 1);
