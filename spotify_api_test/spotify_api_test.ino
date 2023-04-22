@@ -82,24 +82,16 @@ SpotifyArduino spotify(client, clientId, clientSecret, SPOTIFY_REFRESH_TOKEN);
 void playSingleTrack()
 {
     char sampleTrack[] = "spotify:track:4uLU6hMCjMI75M1A2tKUQC";
-    char *deviceId = "dd1edf2aa262ca8250b03a0a8401ee387e4f80c4";
+    //char *deviceId = "dd1edf2aa262ca8250b03a0a8401ee387e4f80c4";
     char body[200];
     sprintf(body, "{\"uris\" : [\"%s\"]}", sampleTrack);
-    Serial.println(sizeof(body));
-    Serial.println(sizeof(deviceId));
-    spotify.playAdvanced(body, deviceId);
+    spotify.playAdvanced(body); //, deviceId);
 }
 
 void setup()
 {
 
     Serial.begin(115200);
-
-    // Set WiFi to station mode and disconnect from an AP if it was Previously
-    // connected
-    WiFi.mode(WIFI_STA);
-    WiFi.disconnect();
-    delay(100);
 
     // Attempt to connect to Wifi network:
     Serial.print("Connecting Wifi: ");
@@ -122,6 +114,8 @@ void setup()
 
     // If you want to enable some extra debugging
     // uncomment the "#define SPOTIFY_DEBUG" in SpotifyArduino.h
+
+    spotify.printStack();
 
     Serial.println("Refreshing Access Tokens");
     if (!spotify.refreshAccessToken())
