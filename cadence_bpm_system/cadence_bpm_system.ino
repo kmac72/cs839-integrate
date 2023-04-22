@@ -264,11 +264,11 @@ bool connectToServer() {
 String fetchSongByBPM(int bpm) {
 
   char url[100];
-  sprintf(url, "http://18.119.17.68:3000/songs?tempo_gte=%d&tempo_lte=%d&danceability_gte=.8", bpm - 2, bpm + 2);
+  sprintf(url, "http://18.119.17.68:3000/songs?tempo_gte=%d&tempo_lte=%d&danceability_gte=.8", bpm - 1, bpm + 1);
   Serial.print("Request: ");
   Serial.println(url);
   
-  http_client.begin(wifi_client, url);
+  http_client.begin(url);
   int response = http_client.GET();
   String payload = http_client.getString();
   http_client.end();
@@ -351,7 +351,7 @@ void loop() {
   unsigned long curr_timestamp = millis();
 
   if(curr_timestamp >= timestampToFetchNextSong) {
-    curAverageBpm = curCadenceAverage * 2;
+    int curAverageBpm = curCadenceAverage * 2;
     nextSongToPlayTrackId = fetchSongByBPM(curAverageBpm);
     cadenceAverageNumerator = 0;
     cadenceAverageDenominator = 0;
