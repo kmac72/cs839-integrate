@@ -40,8 +40,8 @@ static int scanCount = 0;
 
 #define debug 0
 
-static int cadenceAverageNumerator = 0;
-static int cadenceAverageDenominator = 0;
+static int cadenceAverageNumerator = 75;
+static int cadenceAverageDenominator = 1;
 static int curCadenceTimeValue = 0;
 static int curCadenceAverage = 0;
 
@@ -363,19 +363,13 @@ void loop() {
   // If we get here it's connected
   unsigned long curr_timestamp = millis();
 
-  if(curr_timestamp >= timestampToFetchNextSong) {
+  if(curr_timestamp >= timestampPlayingSongDone) {
     int curAverageBpm = curCadenceAverage * 2;
     nextSongToPlayTrackId = fetchSongByBPM(curAverageBpm);
-    cadenceAverageNumerator = 0;
-    cadenceAverageDenominator = 0;
-  }
-
-  if(curr_timestamp >= timestampPlayingSongDone) {
     playSong(nextSongToPlayTrackId);
-    int halfLengthSongPlayed = nextSongToPlayDuration_ms * 0.5;
-    timestampToFetchNextSong = millis() + halfLengthSongPlayed;
     timestampPlayingSongDone = millis() + nextSongToPlayDuration_ms;
-    currentPlayingSongTrackId = nextSongToPlayTrackId;
+    cadenceAverageDenominator = 0;
+    cadenceAverageNumerator = 0;
   }
 
   //if(curr_timestamp - prev_timestamp > loop_delay) {
