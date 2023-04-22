@@ -283,13 +283,11 @@ String fetchSongByBPM(int bpm) {
   return obj["track_id"];
 }
 
-void playSong(String trackUri) {
-    char body[100];
+void playSong(char trackUri[]) {
+    //char trackUri[] = "spotify:track:4uLU6hMCjMI75M1A2tKUQC";
+    char body[200];
     sprintf(body, "{\"uris\" : [\"%s\"]}", trackUri);
-    if (spotify.playAdvanced(body))
-    {
-        Serial.println("sent!");
-    }
+    spotify.playAdvanced(body); //, deviceId);
 }
 
 void setup() {
