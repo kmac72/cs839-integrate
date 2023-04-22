@@ -115,8 +115,6 @@ void setup()
     // If you want to enable some extra debugging
     // uncomment the "#define SPOTIFY_DEBUG" in SpotifyArduino.h
 
-    spotify.printStack();
-
     Serial.println("Refreshing Access Tokens");
     if (!spotify.refreshAccessToken())
     {
