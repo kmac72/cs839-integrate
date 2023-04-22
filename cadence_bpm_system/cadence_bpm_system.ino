@@ -38,7 +38,7 @@ static int prevCrankStaleness = 0;
 static int stalenessLimit = 4;
 static int scanCount = 0;
 
-#define debug 1
+#define debug 0
 
 static int cadenceAverageNumerator = 0;
 static int cadenceAverageDenominator = 0;
