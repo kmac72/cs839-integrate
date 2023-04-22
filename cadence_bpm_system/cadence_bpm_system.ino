@@ -267,6 +267,8 @@ bool connectToServer() {
 
 String fetchSongByBPM(int bpm) {
 
+  bpm = 160;
+
   char url[100];
   sprintf(url, "http://18.119.17.68:3000/songs?tempo_gte=%d&tempo_lte=%d&danceability_gte=.8", bpm - 1, bpm + 1);
   Serial.print("Request: ");
@@ -279,18 +281,22 @@ String fetchSongByBPM(int bpm) {
 
   DynamicJsonDocument doc(1024);
   deserializeJson(doc, payload);
-  JsonObject obj = doc.as<JsonObject>();
+  JsonArray song_list = doc.as<JsonArray>();
+  JsonObject song = song_list[0].as<JsonObject>();
 
-  nextSongToPlayDuration_ms = obj["duration_ms"];
+  String song_id = song["id"].as<String>();
+  nextSongToPlayDuration_ms = song["duration_ms"].as<int>();
 
-  Serial.printf("Track id: %s\n", obj["track_id"]);
-  return obj["track_id"];
+  Serial.print("Song ID: ");
+  Serial.println(song_id);
+  Serial.printf("Duration: %d\n", nextSongToPlayDuration_ms);
+  return song_id;
 }
 
-void playSong(char trackUri[]) {
+void playSong(String trackUri) {
     //char trackUri[] = "spotify:track:4uLU6hMCjMI75M1A2tKUQC";
     char body[200];
-    sprintf(body, "{\"uris\" : [\"%s\"]}", trackUri);
+    sprintf(body, "{\"uris\" : [\"spotify:track:%s\"]}", trackUri.c_str());
     spotify.playAdvanced(body); //, deviceId);
 }
 
@@ -306,12 +312,15 @@ void setup() {
   Serial.println("WiFi connected");
 
   prev_timestamp = millis();
+
+  /*
   BLEDevice::init("");
   scanner = BLEDevice::getScan();
   scanner->setAdvertisedDeviceCallbacks(new AdvertisedDeviceCallbacks());
   scanner->setInterval(1349);
   scanner->setWindow(449);
   scanner->setActiveScan(true);
+  */
 
 
 
@@ -326,6 +335,7 @@ void setup() {
 }
 
 void loop() {
+  /*
   // Start scan
   if(!cadence_connected){
     Serial.println("Start Scan!");
@@ -348,6 +358,7 @@ void loop() {
       return;
     }
   }
+  */
 
   // If we get here it's connected
   unsigned long curr_timestamp = millis();
