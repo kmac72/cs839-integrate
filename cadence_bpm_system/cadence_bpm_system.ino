@@ -174,7 +174,11 @@ static void notifyCallback(BLERemoteCharacteristic* pBLERemoteCharacteristic, ui
   curCadenceTimeValue = cadence * timeDelta;
   cadenceAverageNumerator = cadenceAverageNumerator + curCadenceTimeValue;
   cadenceAverageDenominator = cadenceAverageDenominator + timeDelta;
-  curCadenceAverage = cadenceAverageNumerator / cadenceAverageDenominator;
+  if(cadenceAverageDenominator > 0){
+    curCadenceAverage = cadenceAverageNumerator / cadenceAverageDenominator;
+  }else{
+    curCadenceAverage = 0;
+  }
   
   // if(debug) {
   //   Serial.print("CALLBACK(");
