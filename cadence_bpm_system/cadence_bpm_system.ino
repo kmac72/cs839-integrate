@@ -275,18 +275,22 @@ String fetchSongByBPM(int bpm) {
 
   DynamicJsonDocument doc(1024);
   deserializeJson(doc, payload);
-  JsonObject obj = doc.as<JsonObject>();
+  JsonArray song_list = doc.as<JsonArray>();
+  JsonObject song = song_list[0].as<JsonObject>();
 
-  nextSongToPlayDuration_ms = obj["duration_ms"];
+  String song_id = song["id"].as<String>();
+  nextSongToPlayDuration_ms = song["duration_ms"].as<int>();
 
-  Serial.printf("Track id: %s\n", obj["track_id"]);
-  return obj["track_id"];
+  Serial.print("Song ID: ");
+  Serial.println(song_id);
+  Serial.printf("Duration: %d\n", nextSongToPlayDuration_ms);
+  return song_id;
 }
 
-void playSong(char trackUri[]) {
+void playSong(String trackUri) {
     //char trackUri[] = "spotify:track:4uLU6hMCjMI75M1A2tKUQC";
     char body[200];
-    sprintf(body, "{\"uris\" : [\"%s\"]}", trackUri);
+    sprintf(body, "{\"uris\" : [\"%s\"]}", trackUri.c_str());
     spotify.playAdvanced(body); //, deviceId);
 }
 
