@@ -43,7 +43,8 @@ static int scanCount = 0;
 static int cadenceAverageNumerator = 0;
 static int cadenceAverageDenominator = 1;
 static int curCadenceTimeValue = 0;
-static int curCadenceAverage = 85;
+static int curCadenceAverage = 90;
+
 
 static int timestampPlayingSongDone = 0;
 static int timestampToFetchNextSong = 0;
@@ -52,6 +53,7 @@ static String currentPlayingSongTrackId = "";
 static String nextSongToPlayTrackId = "";
 static int nextSongToPlayDuration_ms = 0;
 
+static int default_window_size = 1;
 #define debug 0
 #define maxCadence 120
 
@@ -65,7 +67,7 @@ HTTPClient http_client;
 SpotifyArduino spotify(wifi_client, clientId, clientSecret, SPOTIFY_REFRESH_TOKEN);
 
 unsigned long prev_timestamp;
-unsigned int loop_delay = 10000;  // 10 secs
+unsigned int loop_delay = 20000;  // 10 secs
 
 static bool is_bit_set(unsigned value, unsigned bitindex)
 {
@@ -265,12 +267,12 @@ bool connectToServer() {
   return true;
 }
 
-String fetchSongByBPM(int bpm) {
+String fetchSongByBPM(int bpm, int window_size) {
 
   //bpm = 160;
 
   char url[100];
-  sprintf(url, "http://18.119.17.68:3000/songs?tempo_gte=%d&tempo_lte=%d&danceability_gte=.8", bpm - 1, bpm + 1);
+  sprintf(url, "http://18.119.17.68:3000/songs2?tempo_gte=%d&tempo_lte=%d&energy_gte=.5&danceability_gte=.5", bpm - window_size, bpm + window_size);
   Serial.print("Request: ");
   Serial.println(url);
   
@@ -313,14 +315,14 @@ void setup() {
 
   prev_timestamp = millis();
 
-  /*
+  
   BLEDevice::init("");
   scanner = BLEDevice::getScan();
   scanner->setAdvertisedDeviceCallbacks(new AdvertisedDeviceCallbacks());
   scanner->setInterval(1349);
   scanner->setWindow(449);
   scanner->setActiveScan(true);
-  */
+  
 
 
 
@@ -332,10 +334,6 @@ void setup() {
   {
     Serial.println("Failed to get access tokens");
   }
-}
-
-void loop() {
-  /*
   // Start scan
   if(!cadence_connected){
     Serial.println("Start Scan!");
@@ -358,24 +356,38 @@ void loop() {
       return;
     }
   }
-  */
+}
 
+void loop() {
+  
+  // Serial.println("Cadence: ");
+  // Serial.println(int(rpm));
   // If we get here it's connected
   unsigned long curr_timestamp = millis();
 
-  if(curr_timestamp >= timestampPlayingSongDone) {
+  // if(curr_timestamp >= timestampPlayingSongDone) {
+  //   int curAverageBpm = curCadenceAverage * 2;
+  //   nextSongToPlayTrackId = fetchSongByBPM(curAverageBpm, default_window_size);
+  //   if (nextSongToPlayDuration_ms == 0) {
+  //     nextSongToPlayTrackId = fetchSongByBPM(curAverageBpm, default_window_size + 2);
+  //   }
+  //   playSong(nextSongToPlayTrackId);
+  //   timestampPlayingSongDone = millis() + nextSongToPlayDuration_ms;
+  //   cadenceAverageDenominator = 0;
+  //   cadenceAverageNumerator = 0;
+  // }
+
+  if(curr_timestamp - prev_timestamp > loop_delay) {
+
     int curAverageBpm = curCadenceAverage * 2;
-    nextSongToPlayTrackId = fetchSongByBPM(curAverageBpm);
+    nextSongToPlayTrackId = fetchSongByBPM(curAverageBpm, default_window_size);
+    if (nextSongToPlayDuration_ms == 0) {
+      nextSongToPlayTrackId = fetchSongByBPM(curAverageBpm, default_window_size + 2);
+    }
     playSong(nextSongToPlayTrackId);
     timestampPlayingSongDone = millis() + nextSongToPlayDuration_ms;
     cadenceAverageDenominator = 0;
     cadenceAverageNumerator = 0;
+    prev_timestamp = millis();
   }
-
-  //if(curr_timestamp - prev_timestamp > loop_delay) {
-    //int bpm = cadence * 2;
-    //String trackUri = fetchSongByBPM(bpm);
-    //playSong(trackUri);
-    //prev_timestamp = millis();
-  //}
 }
