@@ -268,11 +268,12 @@ bool connectToServer() {
 }
 
 String fetchSongByBPM(int bpm, int window_size) {
-
+  String song_id;
   //bpm = 160;
 
   char url[100];
-  sprintf(url, "http://18.119.17.68:3000/songs2?tempo_gte=%d&tempo_lte=%d&energy_gte=.5&danceability_gte=.5", bpm - window_size, bpm + window_size);
+  // sprintf(url, "http://18.119.17.68:3000/songs2?tempo_gte=%d&tempo_lte=%d&energy_gte=.5&danceability_gte=.5", bpm - window_size, bpm + window_size);
+  sprintf(url, "http://18.119.17.68:3000/songs2?tempo_gte=%d&tempo_lte=%d&energy_gte=.5", bpm - window_size, bpm + window_size);
   Serial.print("Request: ");
   Serial.println(url);
   
@@ -284,14 +285,28 @@ String fetchSongByBPM(int bpm, int window_size) {
   DynamicJsonDocument doc(1024);
   deserializeJson(doc, payload);
   JsonArray song_list = doc.as<JsonArray>();
-  JsonObject song = song_list[0].as<JsonObject>();
+  // JsonObject song = song_list[0].as<JsonObject>();
 
-  String song_id = song["id"].as<String>();
-  nextSongToPlayDuration_ms = song["duration_ms"].as<int>();
+  // String song_id = song["id"].as<String>();
+  // nextSongToPlayDuration_ms = song["duration_ms"].as<int>();
+  // --- 
+  int song_count = song_list.size();
+  if (song_count > 0) {
+    int song_index = random(0, song_count); // generate a random index for the song array
+    JsonObject song = song_list[song_index].as<JsonObject>();
 
-  Serial.print("Song ID: ");
-  Serial.println(song_id);
-  Serial.printf("Duration: %d\n", nextSongToPlayDuration_ms);
+    song_id = song["id"].as<String>();
+    nextSongToPlayDuration_ms = song["duration_ms"].as<int>();
+  }
+  else {
+    // handle the case when there are no songs in the array
+    song_id = "4cOdK2wGLETKBW3PvgPWqT"; 
+    nextSongToPlayDuration_ms = 33000;
+  }
+  // -- 
+  // Serial.print("Song ID: ");
+  // Serial.println(song_id);
+  // Serial.printf("Duration: %d\n", nextSongToPlayDuration_ms);
   return song_id;
 }
 
