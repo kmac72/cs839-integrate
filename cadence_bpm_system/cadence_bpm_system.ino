@@ -13,6 +13,8 @@
 
 
 // 839 Integrate
+// We adapted our cadence sensor code from https://github.com/jamesmontemagno/mycadence-arduino, which is available under a Attibution-NonCommercial Creative Commons License
+
 const char* ssid = SECRET_SSID;
 const char* password = SECRET_PASSWORD;
 
@@ -45,7 +47,6 @@ static int cadenceAverageDenominator = 1;
 static int curCadenceTimeValue = 0;
 static int curCadenceAverage = 90;
 
-
 static int timestampPlayingSongDone = 0;
 static int timestampToFetchNextSong = 0;
 
@@ -57,7 +58,6 @@ static int default_window_size = 1;
 #define debug 0
 #define maxCadence 120
 
-
 // Country code, including this is advisable
 #define SPOTIFY_MARKET "US"
 
@@ -67,7 +67,7 @@ HTTPClient http_client;
 SpotifyArduino spotify(wifi_client, clientId, clientSecret, SPOTIFY_REFRESH_TOKEN);
 
 unsigned long prev_timestamp;
-unsigned int loop_delay = 20000;  // 10 secs
+unsigned int loop_delay = 40000;  // 30 secs
 
 static bool is_bit_set(unsigned value, unsigned bitindex)
 {
@@ -202,14 +202,12 @@ static void notifyCallback(BLERemoteCharacteristic* pBLERemoteCharacteristic, ui
 // Called on connect or disconnect
 class ClientCallback : public BLEClientCallbacks {
   void onConnect(BLEClient* pclient) {
-    // digitalWrite(LED,HIGH);
     Serial.println("Connected!");
   }
   void onDisconnect(BLEClient* pclient) {
     cadence_connected = false;
     delete(client);
     client = nullptr;
-    //digitalWrite(LED,LOW);
     Serial.println("Disconnected!");
   }
 };
@@ -301,7 +299,7 @@ String fetchSongByBPM(int bpm, int window_size) {
   else {
     // handle the case when there are no songs in the array
     song_id = "4cOdK2wGLETKBW3PvgPWqT"; 
-    nextSongToPlayDuration_ms = 33000;
+    nextSongToPlayDuration_ms = 20000;
   }
   // -- 
   // Serial.print("Song ID: ");
@@ -313,8 +311,9 @@ String fetchSongByBPM(int bpm, int window_size) {
 void playSong(String trackUri) {
     //char trackUri[] = "spotify:track:4uLU6hMCjMI75M1A2tKUQC";
     char body[200];
+
     sprintf(body, "{\"uris\" : [\"spotify:track:%s\"]}", trackUri.c_str());
-    spotify.playAdvanced(body); //, deviceId);
+    spotify.playAdvanced(body); //, "c65e29c03a47450888b57776976de9b46fcf15d9");
 }
 
 void setup() {
